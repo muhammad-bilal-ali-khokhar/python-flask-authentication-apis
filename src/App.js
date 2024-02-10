@@ -1,25 +1,77 @@
-import logo from './logo.svg';
 import './App.css';
-
-function App() {
+import { SignUp } from './components/SignUp'
+import { SignIn } from './components/SignIn'
+import { createBrowserRouter, RouterProvider, Outlet, useLocation } from "react-router-dom";
+import { Profile } from './components/Profile';
+import { Home } from './components/Home';
+import { Header } from './components/Header';
+import { Footer } from './components/Footer';
+const Layout = () => {
+  const location = useLocation();
+  const isSignUpOrSignInPage = location.pathname === '/' || location.pathname === '/login';
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      {/* {!isSignUpOrSignInPage && <Header />} */}
+      <Outlet />
+      {/* {!isSignUpOrSignInPage && <Footer />} */}
+    </>
   );
+};
+function App() {
+  const router = createBrowserRouter([
+    {
+      path: "/",
+      element: <Layout />,
+      children: [
+        {
+          path: "/",
+          element: <SignUp />,
+        },
+        {
+          path: "login",
+          element: <SignIn />,
+        },
+        {
+          path: "home/:id",
+          element: <Home />,
+        },
+        {
+          path: "profile/:id",
+          element: <Profile />,
+        },
+        {
+          path: "Form",
+          element: <></>,
+        },
+        {
+          path: "profiles",
+          element: <></>,
+        },
+        {
+          path: "Cart",
+          element: "<Cart/>",
+        },
+        {
+          path: "*",
+          element: (
+            <h1
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                color: "#e07a5f",
+                fontSize: "66px",
+                textAlign: "center",
+              }}
+            >
+              404<br></br>Page Not Found
+            </h1>
+          ),
+        },
+      ],
+    },
+  ]);
+  return <RouterProvider router={router} />;
 }
 
 export default App;
