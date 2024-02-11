@@ -16,6 +16,7 @@ const SignInSchema = Yup.object({
 
 export const SignIn = () => {
   const navigate = useNavigate();
+  const [errorMessage, setErrorMessage] = React.useState('');
   const { values, errors, touched, handleBlur, handleChange, handleSubmit } =
     useFormik({
       initialValues: initialValues,
@@ -25,9 +26,12 @@ export const SignIn = () => {
         axios
           .post("http://127.0.0.1:8000/signin", values)
           .then((response) => {
-            if (response) {
+            if (response?.data?.id) {
               console.log({ response });
-              navigate(`/home/${response?.data?.id}`);
+              sessionStorage.setItem('client', JSON.stringify(response.data));
+              navigate(`/home`);
+            }else{
+              setErrorMessage('Email or passwor is worng')
             }
           })
           .catch((error) => {
@@ -38,7 +42,6 @@ export const SignIn = () => {
         action.resetForm();
       },
     });
-
   return (
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', backgroundColor: '#fafafa' }}>
       <div style={{ backgroundColor: '#ffffff', padding: '40px', borderRadius: '8px', boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)', width:'30%'}}>
@@ -70,6 +73,9 @@ export const SignIn = () => {
             />
             {errors.password && touched.password && <div style={{ color: '#ff0000' }}>{errors.password}</div>}
           </div>
+          {errorMessage && (
+          <p style={{ color: 'red', marginBottom: '10px', textAlign: 'center' }}>{errorMessage}</p>
+        )}
           <div style={{ textAlign: 'center' }}>
             <button
               type='submit'

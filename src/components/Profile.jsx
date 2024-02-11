@@ -1,35 +1,38 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from "axios";
 import Avatar from '@mui/material/Avatar';
-
+import { useGetClient } from './useGetClient';
 export const Profile = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [profileDetails, setProfileDetails] = useState({ name: '', email: '' });
-  const [emailAndPass, setEmailAndPass] = useState();
   const [deleteUser, setDeleteUser] = useState(false);
   const [requiredPassword, setRequiredPassword] = useState('');
   const [requiredNewPassword, setRequiredNewPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [isLogout, setIsLogout] = useState(true);
-
-
   const navigate = useNavigate();
-  const { id } = useParams();
+  const client = useGetClient();
 
-  useEffect(() => {
-    if (id) {
+
+
+  React.useEffect(() => {
+    console.log('useLayoutEffect called');
+    console.log('client:', client);
+    if (client) {
       axios
-        .get(`http://127.0.0.1:8000/${id}`)
+        .get(`http://127.0.0.1:8000/${client.id}`)
         .then((response) => {
           setProfileDetails(response?.data);
-          setEmailAndPass(response?.data)
         })
         .catch((error) => {
           console.log(error);
         });
+    } else {
+      console.log('Client is null or undefined');
+      navigate('/login');
     }
-  }, [id, isEditing]);
+  }, [client, navigate]);
 
   const handleEditClick = () => {
     setIsEditing(true);
@@ -39,14 +42,13 @@ export const Profile = () => {
 
   const handleSaveClick = () => {
     const requestData = {
-      id: emailAndPass.id,
-      email: emailAndPass.email,
+      id: client.id,
+      email: client.email,
       password: requiredPassword,
       updated_name: profileDetails.name,
       updated_email: profileDetails.email,
       updated_password: requiredNewPassword,
     };
-
     axios
       .post(`http://127.0.0.1:8000/update`, requestData)
       .then((response) => {
@@ -105,7 +107,10 @@ export const Profile = () => {
   };
   const logginOut =() =>{
     if(isLogout){
-      navigate('/');
+      if (client) {
+        navigate('/');
+        sessionStorage.removeItem('client');
+      }
     }else{
       setIsEditing(false);
       setDeleteUser(false);
@@ -118,6 +123,10 @@ export const Profile = () => {
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh', backgroundColor: '#f0f2f5', padding: '20px' }}>
       <div style={{ backgroundColor: '#fff', padding: '20px', borderRadius: '8px', boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)', maxWidth: '400px', width: '100%' }}>
         <Avatar alt={profileDetails.name} src="/profile.jpg" style={{ margin: 'auto', marginBottom: '20px', width: '100px', height: '100px' }} />
+        <span style={{ display: 'flex', paddingBottom:'20px', justifyContent:'space-evenly' }}>
+        <Link to={"/follower"} style={{ fontWeight: 'bold' , cursor:'pointer',textDecoration:'none',color:'#000'}}>Follower {client.followers.length}</Link>
+        <Link to={"/following"} style={{ fontWeight: 'bold' , cursor:'pointer',textDecoration:'none',color:'#000'}}>Following {client.following.length}</Link>
+        </span>
         <div style={{ marginBottom: '10px' , paddingRight:'20px', display: 'flex', flexDirection: 'column'}}>
           <label style={{ fontWeight: 'bold' }}>{isEditing ? 'Updated Name:' : 'Full Name:   '}</label>
           {isEditing ? (

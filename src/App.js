@@ -1,20 +1,32 @@
 import './App.css';
 import { SignUp } from './components/SignUp'
 import { SignIn } from './components/SignIn'
-import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
+import { createBrowserRouter, RouterProvider, Outlet, useLocation } from "react-router-dom";
 import { Profile } from './components/Profile';
 import { Home } from './components/Home';
+import { FollowingTo } from './components/FollowingTo';
+import { UsersProfile } from './components/UsersProfile';
+import { WelcomContent } from './components/WelcomContent';
+import { useGetClient } from './components/useGetClient';
+import { Follower } from './components/Follower';
+import { Following } from './components/Following';
 const Layout = () => {
-  // const location = useLocation();
-  // const isSignUpOrSignInPage = location.pathname === '/' || location.pathname === '/login';
+  const location = useLocation();
+  const isSignUpOrSignInPage = location.pathname === '/' || location.pathname === '/login';
+  const client = useGetClient();
   return (
     <>
-      {/* {!isSignUpOrSignInPage && <Header />} */}
-      <Outlet />
-      {/* {!isSignUpOrSignInPage && <Footer />} */}
+      {client && !isSignUpOrSignInPage ?  (
+        <Home>
+          <Outlet />
+        </Home>
+      ) : (
+        <Outlet />
+      )}
     </>
   );
 };
+
 function App() {
   const router = createBrowserRouter([
     {
@@ -30,24 +42,28 @@ function App() {
           element: <SignIn />,
         },
         {
-          path: "home/:id",
-          element: <Home />,
+          path: "home",
+          element:<WelcomContent/>,
         },
         {
-          path: "profile/:id",
+          path: "profile",
           element: <Profile />,
         },
         {
-          path: "Form",
-          element: <></>,
+          path: "Suggestions",
+          element: <FollowingTo/>,
         },
         {
-          path: "profiles",
-          element: <></>,
+          path: "user_profile/:id",
+          element: <UsersProfile/>,
         },
         {
-          path: "Cart",
-          element: "<Cart/>",
+          path: "follower",
+          element: <Follower/>,
+        },
+        {
+          path: "following",
+          element: <Following/>,
         },
         {
           path: "*",
