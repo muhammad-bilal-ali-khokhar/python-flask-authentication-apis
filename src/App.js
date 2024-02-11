@@ -1,14 +1,12 @@
 import './App.css';
 import { SignUp } from './components/SignUp'
 import { SignIn } from './components/SignIn'
-import { createBrowserRouter, RouterProvider, Outlet, useLocation } from "react-router-dom";
+import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
 import { Profile } from './components/Profile';
 import { Home } from './components/Home';
-import { Header } from './components/Header';
-import { Footer } from './components/Footer';
 const Layout = () => {
-  const location = useLocation();
-  const isSignUpOrSignInPage = location.pathname === '/' || location.pathname === '/login';
+  // const location = useLocation();
+  // const isSignUpOrSignInPage = location.pathname === '/' || location.pathname === '/login';
   return (
     <>
       {/* {!isSignUpOrSignInPage && <Header />} */}

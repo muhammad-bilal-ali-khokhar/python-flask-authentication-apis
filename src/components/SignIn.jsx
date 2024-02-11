@@ -9,7 +9,7 @@ const initialValues = {
   password: "",
 };
 
-const SignUpSchema = Yup.object({
+const SignInSchema = Yup.object({
   email: Yup.string().email().required("Please enter your Email"),
   password: Yup.string().min(6).required("Please enter your password"),
 });
@@ -19,17 +19,16 @@ export const SignIn = () => {
   const { values, errors, touched, handleBlur, handleChange, handleSubmit } =
     useFormik({
       initialValues: initialValues,
-      validationSchema: SignUpSchema,
+      validationSchema: SignInSchema,
       onSubmit: (values, action) => {
         console.log("values", values);
         axios
           .post("http://127.0.0.1:8000/signin", values)
           .then((response) => {
-            if(response){
-              console.log({response})
-              navigate(`/home/${response?.data?.id}`)
+            if (response) {
+              console.log({ response });
+              navigate(`/home/${response?.data?.id}`);
             }
-            
           })
           .catch((error) => {
             console.log(error);
@@ -41,48 +40,46 @@ export const SignIn = () => {
     });
 
   return (
-    <div className='flex flex-column justify-content-center align-items-center p-d-flex p-flex-column p-jc-center p-ai-center h-screen formBgImage'>
-      <div className='formBg justify-content-center align-items-center p-jc-center p-ai-center w-3 flex flex-column border-round-2xl px-5 py-5 absolute'>
-        <h1 style={{ color: "whitesmoke" }}>Sign In</h1>
-        <form className={""} onSubmit={handleSubmit}>
-          <label className='text-yellow-50 font-bold'>Email</label>
-          <br />
-          <input
-            type='email'
-            name='email'
-            autoComplete='off'
-            value={values.email}
-            onChange={handleChange}
-            onBlur={handleBlur}
-          />
-          {errors.email && touched.email ? (
-            <div>{errors.email}</div>
-          ) : (
-            <div></div>
-          )}
-          <br />
-          <label className='text-yellow-50 font-bold'>Password</label>
-          <br />
-          <input
-            type='password'
-            name='password'
-            autoComplete='off'
-            value={values.password}
-            onChange={handleChange}
-            onBlur={handleBlur}
-          />
-          {errors.password && touched.password ? (
-            <div>{errors.password}</div>
-          ) : (
-            <div></div>
-          )}
-          <br />
-          <div className='flex justify-content-center align-items-center'>
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', backgroundColor: '#fafafa' }}>
+      <div style={{ backgroundColor: '#ffffff', padding: '40px', borderRadius: '8px', boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)', width:'30%'}}>
+        <h1 style={{ textAlign: 'center', color: '#333333', marginBottom: '30px' }}>Sign In</h1>
+        <form onSubmit={handleSubmit}>
+          <div style={{ marginBottom: '20px' }}>
+            <label style={{ display: 'block', marginBottom: '5px', color: '#333333', fontWeight: 'bold' }}>Email</label>
+            <input
+              type='email'
+              name='email'
+              autoComplete='off'
+              value={values.email}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid #e0e0e0', boxSizing: 'border-box' }}
+            />
+            {errors.email && touched.email && <div style={{ color: '#ff0000' }}>{errors.email}</div>}
+          </div>
+          <div style={{ marginBottom: '20px' }}>
+            <label style={{ display: 'block', marginBottom: '5px', color: '#333333', fontWeight: 'bold' }}>Password</label>
+            <input
+              type='password'
+              name='password'
+              autoComplete='off'
+              value={values.password}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid #e0e0e0', boxSizing: 'border-box' }}
+            />
+            {errors.password && touched.password && <div style={{ color: '#ff0000' }}>{errors.password}</div>}
+          </div>
+          <div style={{ textAlign: 'center' }}>
             <button
-              className='submitButton'
               type='submit'
-              style={{ background: "#e50914", border: "1px solid #e50914" }}>
+              style={{ backgroundColor: '#833AB4', color: '#ffffff', padding: '10px 20px', borderRadius: '4px', border: 'none', cursor: 'pointer' ,margin:'5px'}}>
               Sign In
+            </button>
+            <button
+              // onClick={navigate('/')}
+              style={{ backgroundColor: '#833AB4', color: '#ffffff', padding: '10px 20px', borderRadius: '4px', border: 'none', cursor: 'pointer' ,margin:'5px'}}>
+              Sign Up
             </button>
           </div>
         </form>
